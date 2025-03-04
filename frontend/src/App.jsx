@@ -1,8 +1,8 @@
 import React from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
-import Navbar from "./compontents/Navbar";
+import Navbar from "./components/Navbar";
 import HomePage from "./pages/HomePage";
-import Footer from "./compontents/Footer";
+import Footer from "./components/Footer";
 import CreateNotePage from "./pages/CreateNotePage";
 import EditNotePage from "./pages/EditNotePage";
 import ViewNotePage from "./pages/ViewNotePage";

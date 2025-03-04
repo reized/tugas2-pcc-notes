@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
-import CreateBtn from "../compontents/CreateBtn";
-import NotesCard from "../compontents/NotesCard";
+import CreateBtn from "../components/CreateBtn";
+import NotesCard from "../components/NotesCard";
 
 const HomePage = () => {
     const [notes, setNotes] = useState([]);
