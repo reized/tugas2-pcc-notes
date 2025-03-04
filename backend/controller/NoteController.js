@@ -1,4 +1,3 @@
-import { where } from "sequelize";
 import Note from "../models/NoteModel.js";
 
 // ambil data note
