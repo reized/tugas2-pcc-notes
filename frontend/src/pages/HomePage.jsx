@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import CreateBtn from "../components/CreateBtn";
 import NotesCard from "../components/NotesCard";
+import { BASE_URL } from "../utils";
 
 const HomePage = () => {
     const [notes, setNotes] = useState([]);
@@ -11,7 +12,7 @@ const HomePage = () => {
 
     const getNotes = async () => {
         try {
-            const response = await fetch("http://localhost:5000/notes");
+            const response = await fetch(`${ BASE_URL }/notes`);
             const data = await response.json();
             setNotes(data);
         } catch (error) {
