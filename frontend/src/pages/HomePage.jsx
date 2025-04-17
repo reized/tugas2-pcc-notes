@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import CreateBtn from "../components/CreateBtn";
 import NotesCard from "../components/NotesCard";
+import axios from "axios";
 import { BASE_URL } from "../utils";
 
 const HomePage = () => {
@@ -12,7 +13,7 @@ const HomePage = () => {
 
     const getNotes = async () => {
         try {
-            const response = await fetch(`${ BASE_URL }/notes`);
+            const response = await axios.get(`${ BASE_URL }/notes`);
             const data = await response.json();
             setNotes(data);
         } catch (error) {

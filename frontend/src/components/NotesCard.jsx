@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { BASE_URL } from "../utils";
+import axios from "axios";
 
 const NotesCard = ({ note }) => {
     const navigate = useNavigate();
@@ -14,7 +15,7 @@ const NotesCard = ({ note }) => {
     const deleteNote = async (id) => {
         if (window.confirm("Apakah Anda yakin ingin menghapus note ini?")) {
             try {
-                await fetch(`${ BASE_URL }/notes/${id}`, {
+                await axios.get(`${ BASE_URL }/notes/${id}`, {
                     method: "DELETE",
                 });
                 setDeleted(true);

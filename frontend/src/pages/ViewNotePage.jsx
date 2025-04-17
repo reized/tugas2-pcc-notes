@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { BASE_URL } from "../utils";
+import axios from "axios";
 
 const ViewNotePage = () => {
     const navigate = useNavigate();
@@ -13,7 +14,7 @@ const ViewNotePage = () => {
 
     const noteDetail = async () => {
         try {
-            const response = await fetch(`${ BASE_URL }/notes/${id}`);
+            const response = await axios.get(`${ BASE_URL }/notes/${id}`);
             const data = await response.json();
             setNote(data);
         } catch (error) {
@@ -28,7 +29,7 @@ const ViewNotePage = () => {
     const handleDelete = async () => {
         if (window.confirm("Apakah Anda yakin ingin menghapus note ini?")) {
             try {
-                await fetch(`${ BASE_URL }/notes/${id}`, {
+                await axios.get(`${ BASE_URL }/notes/${id}`, {
                     method: "DELETE",
                 });
                 navigate("/");
