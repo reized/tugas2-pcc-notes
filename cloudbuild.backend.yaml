@@ -11,7 +11,7 @@ steps:
       [
         "run",
         "deploy",
-        "be",
+        "demo",
         "--image",
         "gcr.io/$PROJECT_ID/demo",
         "--timeout",
