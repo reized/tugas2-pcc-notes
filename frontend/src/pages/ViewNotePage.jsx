@@ -15,8 +15,7 @@ const ViewNotePage = () => {
     const noteDetail = async () => {
         try {
             const response = await axios.get(`${ BASE_URL }/notes/${id}`);
-            const data = await response.json();
-            setNote(data);
+            setNote(response.data);
         } catch (error) {
             console.error(error.message);
         }

@@ -14,8 +14,7 @@ const HomePage = () => {
     const getNotes = async () => {
         try {
             const response = await axios.get(`${ BASE_URL }/notes`);
-            const data = await response.json();
-            setNotes(data);
+            setNotes(response.data);
         } catch (error) {
             console.log(error.message);
         }

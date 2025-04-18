@@ -16,9 +16,8 @@ const EditNotePage = () => {
 
     const getNoteById = async (id) => {
         const response = await axios.get(`${ BASE_URL }/notes/${id}`);
-        const data = await response.json();
-        setNoteTitle(data.note_title);
-        setNoteContent(data.note_content);
+        setNoteTitle(response.data.note_title);
+        setNoteContent(response.data.note_content);
     };
 
     const updateNote = async (e) => {
