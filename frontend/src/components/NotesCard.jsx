@@ -15,9 +15,7 @@ const NotesCard = ({ note }) => {
     const deleteNote = async (id) => {
         if (window.confirm("Apakah Anda yakin ingin menghapus note ini?")) {
             try {
-                await axios.get(`${ BASE_URL }/notes/${id}`, {
-                    method: "DELETE",
-                });
+                await axios.delete(`${ BASE_URL }/notes/${id}`);
                 setDeleted(true);
             } catch (error) {
                 console.error("Error deleting note:", error);

@@ -28,9 +28,7 @@ const ViewNotePage = () => {
     const handleDelete = async () => {
         if (window.confirm("Apakah Anda yakin ingin menghapus note ini?")) {
             try {
-                await axios.get(`${ BASE_URL }/notes/${id}`, {
-                    method: "DELETE",
-                });
+                await axios.delete(`${ BASE_URL }/notes/${id}`);
                 navigate("/");
             } catch (error) {
                 console.error("Error deleting note:", error);
