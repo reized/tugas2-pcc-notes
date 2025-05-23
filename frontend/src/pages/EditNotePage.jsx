@@ -2,34 +2,94 @@ import React, { useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import axios from "axios";
 import { BASE_URL } from "../utils";
+import useAuth from "../auth/useAuth";
 
 const EditNotePage = () => {
     const [note_title, setNoteTitle] = useState("");
     const [note_content, setNoteContent] = useState("");
+    const { accessToken, refreshAccessToken } = useAuth();
 
     const navigate = useNavigate();
     const { id } = useParams();
-    
+
     useEffect(() => {
-        getNoteById(id);
-    }, []);
+        if (accessToken) {
+            getNoteById(id);
+        }
+    }, [accessToken]);
 
     const getNoteById = async (id) => {
-        const response = await axios.get(`${ BASE_URL }/notes/${id}`);
-        setNoteTitle(response.data.note_title);
-        setNoteContent(response.data.note_content);
+        try {
+            const response = await axios.get(`${BASE_URL}/notes/${id}`, {
+                headers: {
+                    Authorization: `Bearer ${accessToken}`,
+                },
+            });
+            setNoteTitle(response.data.note_title);
+            setNoteContent(response.data.note_content);
+        } catch (error) {
+            if (error.response?.status === 401) {
+                const newAccessToken = await refreshAccessToken();
+                if (newAccessToken && newAccessToken !== "kosong") {
+                    try {
+                        const response = await axios.get(
+                            `${BASE_URL}/notes/${id}`,
+                            {
+                                headers: {
+                                    Authorization: `Bearer ${newAccessToken}`,
+                                },
+                            }
+                        );
+                        setNoteTitle(response.data.note_title);
+                        setNoteContent(response.data.note_content);
+                    } catch (err) {
+                        console.log("Gagal fetch ulang note:", err.message);
+                    }
+                }
+            } else {
+                console.log("Gagal fetch note:", error.message);
+            }
+        }
     };
 
     const updateNote = async (e) => {
         e.preventDefault();
         try {
-            await axios.patch(`${ BASE_URL }/notes/${id}`, {
-                note_title,
-                note_content,
-            });
+            await axios.patch(
+                `${BASE_URL}/notes/${id}`,
+                { note_title, note_content },
+                {
+                    headers: {
+                        Authorization: `Bearer ${accessToken}`,
+                    },
+                }
+            );
             navigate(-1);
         } catch (error) {
-            console.log(error.message);
+            if (error.response?.status === 401) {
+                const newAccessToken = await refreshAccessToken();
+                if (newAccessToken && newAccessToken !== "kosong") {
+                    try {
+                        await axios.patch(
+                            `${BASE_URL}/notes/${id}`,
+                            { note_title, note_content },
+                            {
+                                headers: {
+                                    Authorization: `Bearer ${newAccessToken}`,
+                                },
+                            }
+                        );
+                        navigate(-1);
+                    } catch (err) {
+                        console.log(
+                            "Gagal update setelah refresh:",
+                            err.message
+                        );
+                    }
+                }
+            } else {
+                console.log("Gagal update:", error.message);
+            }
         }
     };
 

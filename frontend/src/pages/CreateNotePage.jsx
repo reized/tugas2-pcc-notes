@@ -3,23 +3,50 @@ import { useNavigate } from "react-router-dom";
 import { useState } from "react";
 import axios from "axios";
 import { BASE_URL } from "../utils";
+import useAuth from "../auth/useAuth";
 
 const CreateNotePage = () => {
     const [note_title, setNoteTitle] = useState("");
     const [note_content, setNoteContent] = useState("");
+    const { accessToken, refreshAccessToken } = useAuth();
 
     const navigate = useNavigate();
 
     const saveNote = async (e) => {
         e.preventDefault();
+
+        const postNote = async (token) => {
+            return await axios.post(
+                `${BASE_URL}/notes`,
+                { note_title, note_content },
+                {
+                    headers: {
+                        Authorization: `Bearer ${token}`,
+                    },
+                }
+            );
+        };
+
         try {
-            await axios.post(`${ BASE_URL }/notes`, {
-                note_title,
-                note_content,
-            });
+            await postNote(accessToken);
             navigate(-1);
         } catch (error) {
-            console.log(error.message);
+            if (error.response?.status === 401) {
+                try {
+                    const newToken = await refreshAccessToken();
+                    if (newToken && newToken !== "kosong") {
+                        await postNote(newToken);
+                        navigate(-1);
+                    }
+                } catch (err) {
+                    console.error(
+                        "Gagal menyimpan note setelah refresh token:",
+                        err.message
+                    );
+                }
+            } else {
+                console.error("Error saat menyimpan note:", error.message);
+            }
         }
     };
 
