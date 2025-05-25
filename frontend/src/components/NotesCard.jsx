@@ -2,10 +2,12 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { BASE_URL } from "../utils";
 import axios from "axios";
+import useAuth from "../auth/useAuth";
 
 const NotesCard = ({ note }) => {
     const navigate = useNavigate();
     const [deleted, setDeleted] = useState(false);
+    const { accessToken, refreshAccessToken } = useAuth();
 
     const handleEdit = (e) => {
         e.stopPropagation();
@@ -13,12 +15,36 @@ const NotesCard = ({ note }) => {
     };
 
     const deleteNote = async (id) => {
-        if (window.confirm("Apakah Anda yakin ingin menghapus note ini?")) {
-            try {
-                await axios.delete(`${ BASE_URL }/notes/${id}`);
-                setDeleted(true);
-            } catch (error) {
-                console.error("Error deleting note:", error);
+        if (!window.confirm("Apakah Anda yakin ingin menghapus note ini?"))
+            return;
+
+        const deleteRequest = async (token) => {
+            return await axios.delete(`${BASE_URL}/notes/${id}`, {
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                },
+            });
+        };
+
+        try {
+            await deleteRequest(accessToken);
+            setDeleted(true);
+        } catch (error) {
+            if (error.response?.status === 401) {
+                try {
+                    const newToken = await refreshAccessToken();
+                    if (newToken && newToken !== "kosong") {
+                        await deleteRequest(newToken);
+                        setDeleted(true);
+                    }
+                } catch (err) {
+                    console.error(
+                        "Gagal hapus setelah refresh token:",
+                        err.message
+                    );
+                }
+            } else {
+                console.error("Error deleting note:", error.message);
             }
         }
     };

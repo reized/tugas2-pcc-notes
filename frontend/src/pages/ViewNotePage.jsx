@@ -2,22 +2,49 @@ import React, { useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { BASE_URL } from "../utils";
 import axios from "axios";
+import useAuth from "../auth/useAuth";
 
 const ViewNotePage = () => {
     const navigate = useNavigate();
     const { id } = useParams();
     const [note, setNote] = useState({});
+    const { accessToken, refreshAccessToken } = useAuth();
 
     useEffect(() => {
-        noteDetail();
-    }, []);
+        if (accessToken) {
+            noteDetail();
+        }
+    }, [accessToken]);
 
     const noteDetail = async () => {
         try {
-            const response = await axios.get(`${ BASE_URL }/notes/${id}`);
+            const response = await axios.get(`${BASE_URL}/notes/${id}`, {
+                headers: {
+                    Authorization: `Bearer ${accessToken}`,
+                },
+            });
             setNote(response.data);
         } catch (error) {
-            console.error(error.message);
+            if (error.response?.status === 401) {
+                const newToken = await refreshAccessToken();
+                if (newToken && newToken !== "kosong") {
+                    try {
+                        const response = await axios.get(
+                            `${BASE_URL}/notes/${id}`,
+                            {
+                                headers: {
+                                    Authorization: `Bearer ${newToken}`,
+                                },
+                            }
+                        );
+                        setNote(response.data);
+                    } catch (err) {
+                        console.log("Gagal setelah refresh:", err.message);
+                    }
+                }
+            } else {
+                console.error(error.message);
+            }
         }
     };
 
@@ -28,10 +55,33 @@ const ViewNotePage = () => {
     const handleDelete = async () => {
         if (window.confirm("Apakah Anda yakin ingin menghapus note ini?")) {
             try {
-                await axios.delete(`${ BASE_URL }/notes/${id}`);
+                await axios.delete(`${BASE_URL}/notes/${id}`, {
+                    headers: {
+                        Authorization: `Bearer ${accessToken}`,
+                    },
+                });
                 navigate("/");
             } catch (error) {
-                console.error("Error deleting note:", error);
+                if (error.response?.status === 401) {
+                    const newToken = await refreshAccessToken();
+                    if (newToken && newToken !== "kosong") {
+                        try {
+                            await axios.delete(`${BASE_URL}/notes/${id}`, {
+                                headers: {
+                                    Authorization: `Bearer ${newToken}`,
+                                },
+                            });
+                            navigate("/");
+                        } catch (err) {
+                            console.error(
+                                "Gagal hapus setelah refresh:",
+                                err.message
+                            );
+                        }
+                    }
+                } else {
+                    console.error("Error deleting note:", error.message);
+                }
             }
         }
     };
