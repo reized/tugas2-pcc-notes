@@ -1,4 +1,4 @@
-import { useAuthContext } from "./authProvider";
+import { useAuthContext } from "./AuthProvider";
 
 const useAuth = () => {
     const { accessToken, login, logout, refreshAccessToken } = useAuthContext();

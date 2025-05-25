@@ -8,7 +8,7 @@ import EditNotePage from "./pages/EditNotePage";
 import ViewNotePage from "./pages/ViewNotePage";
 import LoginPage from "./pages/LoginPage";
 import RegisterPage from "./pages/RegisterPage";
-import { AuthProvider } from "./auth/authProvider";
+import { AuthProvider } from "./auth/AuthProvider";
 import ProtectedRoute from "./pages/ProtectedRoute";
 
 const App = () => {

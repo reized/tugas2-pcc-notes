@@ -1,14 +1,35 @@
+# runtime: nodejs20
+# service: frontend-refaiza
+# instance_class: F1
+
+# handlers:
+#   - url: /
+#     static_files: dist/index.html
+#     upload: dist/index.html
+
+#   - url: /(.*)
+#     static_files: dist/\1
+#     upload: dist/(.*)
+
+# default_expiration: "1h"
+
 runtime: nodejs20
 service: frontend-refaiza
 instance_class: F1
 
 handlers:
-  - url: /
+  # Semua file statis seperti JS, CSS, gambar, dll
+  - url: /(.*\.(js|css|png|jpg|svg|ico|json|txt|woff2?|ttf|map))
     static_files: dist/index.html
     upload: dist/index.html
 
-  - url: /(.*)
-    static_files: dist/\1
-    upload: dist/(.*)
+  # Folder static (umumnya isi build/static)
+  - url: /static
+    static_dir: dist/static
+
+  # Untuk semua URL lain arahkan ke index.html (fallback ke React)
+  - url: /.*
+    static_files: dist/index.html
+    upload: dist/index.html
 
 default_expiration: "1h"
