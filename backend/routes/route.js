@@ -25,11 +25,11 @@ router.post('/token', refreshToken);
 router.delete('/logout', logout);
 
 // Note Routes
-router.get('/notes', VerifyToken, getNote);
-router.get('/notes/:id', VerifyToken, getNoteById);
-router.post('/notes/', VerifyToken, createNote);
-router.patch('/notes/:id', VerifyToken, updateNote);
-router.delete('/notes/:id', VerifyToken, deleteNote);
+router.get('/notes', getNote);
+router.get('/notes/:id', getNoteById);
+router.post('/notes/', createNote);
+router.patch('/notes/:id', updateNote);
+router.delete('/notes/:id', deleteNote);
 
 router.all("*", (req, res) => {
     res.status(404).json({
