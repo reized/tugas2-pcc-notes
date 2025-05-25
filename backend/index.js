@@ -1,22 +1,26 @@
-import express from 'express';
-import cors from 'cors';
-import cookieParser from 'cookie-parser';
-import router from './routes/route.js';
+import express from "express";
+import cors from "cors";
+import cookieParser from "cookie-parser";
+import router from "./routes/route.js";
+import "./models/index.js";
 
 const app = express();
+const port = process.env.PORT || 5000;
 
-app.use(cors({
-    origin: "http://localhost:5173", // port frontend
+const corsOptions = {
+    origin: ["http://localhost:5173"],
     credentials: true,
-}));
+    methods: ["GET", "POST", "PUT", "DELETE"],
+    allowedHeaders: ["Content-Type", "Authorization"],
+};
 
-app.use(cookieParser());
+app.use(cors(corsOptions));
 
-//  parsing JSON body
+app.options("*", cors(corsOptions));
+
 app.use(express.json());
-
-// pasang router
+app.use(cookieParser());
 app.use(router);
 
 // jalankan server
-app.listen(5000, () => console.log('Server is up and running'));
+app.listen(port, () => console.log("Server is up and running on port " + port));
